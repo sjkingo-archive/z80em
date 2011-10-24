@@ -8,7 +8,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#include "machine.h"
+#include "cpu.h"
+#include "emulator.h"
 
 bool verbose = false;
 
@@ -46,12 +47,6 @@ static char *handle_args(int argc, char **argv) {
     return objfile;
 }
 
-/*
-    char first_inst[4];
-    read(fd, first_inst, 4);
-    printf("first inst: %x %x %x %x\n", first_inst[0], first_inst[1], first_inst[2], first_inst[3]);
-*/
-
 static void setup_and_run(char *filename) {
     int fd = open(filename, O_RDONLY);
     if (fd < 0) {
@@ -85,6 +80,7 @@ int main(int argc, char **argv) {
     if (verbose) printf("  -v has enabled verbose execution\n");
     printf("\n");
 
+    init_cpu_state();
     setup_and_run(objfile);
 
     return 0;

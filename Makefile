@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall -Wextra -g -O
+CFLAGS=-Wall -Wextra -g -O -std=gnu99
 
 .PHONY: all
 all: z80em
@@ -8,5 +8,5 @@ all: z80em
 clean:
 	rm -f z80em core *.o
 
-z80em: main.o machine.o
+z80em: main.o machine.o cpu.o
 	$(CC) -o $@ $^

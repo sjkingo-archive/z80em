@@ -3,44 +3,47 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "cpu.h"
 #include "insts.h"
-#include "machine.h"
-
-extern bool verbose;
-
-#define printfv(fmt, ...) \
-    if (verbose) printf("%s(): " fmt, __func__, ##__VA_ARGS__)
-
-static void halt(void) {
-    fprintf(stderr, "machine halted\n");
-    exit(10);
-}
+#include "emulator.h"
 
 void run_machine(unsigned char *ops, unsigned int max_pc) {
-    struct z80_cpu_state cpu;
-    memset(&cpu, 0, sizeof(cpu));
+    printfv("starting emulation\n\n");
 
-    printfv("enter\n");
-    while (cpu.pc < max_pc) {
-        unsigned char opcode = ops[cpu.pc];
+    while (cpu->regs.pc < max_pc) {
+        unsigned char opcode = ops[cpu->regs.pc];
+        printfv("pc=%d, opcode=0x%x\n", cpu->regs.pc, opcode);
+
         struct z80_instruction *inst = find_opcode(opcode);
         if (inst == NULL) {
-            fprintf(stderr, "invalid opcode 0x%x\n", opcode);
-            halt();
+            panic("invalid opcode 0x%x\n", opcode);
         }
-        printfv("opcode = 0x%x, inst = %s\n", opcode, inst->name);
+        printfv("  %s\n", inst->name);
+
         switch (opcode) {
             case OP_NOP:
                 break;
-            case OP_LD_RN: {
-                /* immediate load n into r */
-                unsigned char n = ops[cpu.pc+1];
-                unsigned char r = ops[cpu.pc+2];
-                printfv("  %x <- %x\n", r, n);
+
+            case OP_LD_B_N:
+            case OP_LD_H_N: {
+                /* immediate load n into reg X */
+                unsigned char n = ops[cpu->regs.pc+1];
+                switch (opcode) {
+                    case OP_LD_B_N:
+                        set_reg(REG_B, n);
+                        break;
+                    case OP_LD_H_N:
+                        set_reg(REG_H, n);
+                        break;
+                }
                 break;
             }
+
+            default:
+                panic("unhandled opcode %s (0x%x)\n", inst->name, opcode);
         }
-        cpu.pc += inst->cycles;
+        cpu->regs.pc += inst->cycles;
     }
-    printfv("exit\n");
+
+    printfv("\nfinished emulation\n");
 }
