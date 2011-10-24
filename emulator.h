@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-extern bool verbose;
+extern bool verbose, enable_debugger;
 
 static inline void halt(void) {
     fprintf(stderr, "machine halted\n");

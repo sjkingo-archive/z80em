@@ -3,12 +3,15 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "debugger.h"
 #include "cpu.h"
 #include "insts.h"
 #include "emulator.h"
 
 void run_machine(unsigned char *ops, unsigned int max_pc) {
     printfv("starting emulation\n\n");
+
+    if (enable_debugger) debugger_break();
 
     while (cpu->regs.pc < max_pc) {
         unsigned char opcode = ops[cpu->regs.pc];

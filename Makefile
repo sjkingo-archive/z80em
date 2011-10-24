@@ -8,5 +8,5 @@ all: z80em
 clean:
 	rm -f z80em core *.o
 
-z80em: main.o machine.o cpu.o
+z80em: main.o machine.o cpu.o debugger.o
 	$(CC) -o $@ $^

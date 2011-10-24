@@ -1,3 +1,4 @@
+#include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -12,39 +13,42 @@
 #include "emulator.h"
 
 bool verbose = false;
+bool enable_debugger = false;
 
 static inline void print_usage_error(void) {
-    fprintf(stderr, "Usage: z80em [-v] objfile\n");
+    fprintf(stderr, "Usage: z80em [options..] objfile\n");
+    fprintf(stderr, "\t-d\tenter the debugger upon start\n");
+    fprintf(stderr, "\t-h\tprint this usage message and exit\n");
+    fprintf(stderr, "\t-v\tenable verbose execution\n");
 }
 
 static char *handle_args(int argc, char **argv) {
-    char *objfile = NULL;
+    int opt;
 
-    if (argc <= 1 || argc > 3) {
-        print_usage_error();
-        exit(1);
+    while ((opt = getopt(argc, argv, "dhv")) != -1) {
+        switch (opt) {
+            case 'd':
+                enable_debugger = true;
+                break;
+            case 'h':
+                print_usage_error();
+                exit(0);
+            case 'v':
+                verbose = true;
+                break;
+            default:
+                print_usage_error();
+                exit(1);
+        }
     }
 
-    argv++;
-
-    if (strcmp(argv[0], "-h") == 0) {
-        print_usage_error();
-        exit(0);
-    }
-    if (strcmp(argv[0], "-v") == 0) {
-        verbose = true;
-        argv++;
-    }
-
-    objfile = argv[0];
-    if (objfile == NULL) {
-        /* -v given but no filename */
+    if (optind >= argc) {
         fprintf(stderr, "Error: objfile is a required argument\n");
         print_usage_error();
         exit(1);
     }
 
-    return objfile;
+    return argv[optind];
 }
 
 static void setup_and_run(char *filename) {
@@ -77,7 +81,7 @@ int main(int argc, char **argv) {
 
     printf("z80em - a z80 emulator and debugger\n");
     printf("Written by Sam Kingston <sam@sjkwi.com.au>\n");
-    if (verbose) printf("  -v has enabled verbose execution\n");
+    if (verbose) printf("-v has enabled verbose execution\n");
     printf("\n");
 
     init_cpu_state();
