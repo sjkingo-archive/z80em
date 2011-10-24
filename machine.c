@@ -60,6 +60,11 @@ void run_machine(unsigned char *ops, unsigned int max_pc) {
                 break;
             }
 
+            case OP_HALT:
+                /* halt until interrupt */
+                for (;;); /* nop */
+                break;
+
             default:
                 panic("unhandled opcode %s (0x%x)\n", inst->name, opcode);
         }
