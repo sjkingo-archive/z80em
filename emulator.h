@@ -20,6 +20,9 @@ static inline void halt(void) {
     halt(); \
 })
 
+/* hexdump the objfile with program counter marker */
+void dump_objfile(void);
+
 void run_machine(unsigned char *ops, unsigned int max_pc);
 
 #endif

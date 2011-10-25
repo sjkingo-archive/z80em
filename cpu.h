@@ -39,6 +39,8 @@ struct z80_register_state {
 struct z80_cpu_state {
     struct z80_status_reg status;
     struct z80_register_state regs;
+    unsigned short max_pc; /* max program counter value */
+    unsigned char *code; /* executable code */
 };
 
 extern struct z80_cpu_state *cpu;

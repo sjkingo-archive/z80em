@@ -17,6 +17,7 @@ static void cmd_show(char **args) {
     if (args[0] == NULL) {
         printf("show [option]\n");
         printf("     regs\tShow the status of the CPU registers\n");
+        printf("     objfile\thexdumps the object file from pc point on\n");
         return;
     }
 
@@ -25,7 +26,8 @@ static void cmd_show(char **args) {
         printf("A=%x\tB=%x\tC=%x\tD=%x\n", cpu->regs.a, cpu->regs.b, cpu->regs.c,
                 cpu->regs.d);
         printf("E=%x\tH=%x\tL=%x\n", cpu->regs.e, cpu->regs.h, cpu->regs.l);
-        return;
+    } else if (strcmp(args[0], "objfile") == 0) {
+        dump_objfile();
     }
 }
 

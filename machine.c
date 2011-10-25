@@ -8,8 +8,44 @@
 #include "insts.h"
 #include "emulator.h"
 
+void dump_objfile(void) {
+    unsigned short i;
+    unsigned int this_row = 0;
+    int pc_at = -1;
+
+    for (i = 0; i <= cpu->max_pc; i++) {
+        unsigned int this_print = printf("%04x", cpu->code[i]);
+        this_row += this_print;
+
+        if (i == cpu->regs.pc)
+            pc_at = this_row - this_print;
+
+        if (i != 0 && i % 4 == 0) {
+            printf("\n");
+            this_row = 0;
+
+            if (pc_at != -1) {
+                for (unsigned short p = 0; p < pc_at; p++)
+                    printf(" ");
+                printf("^ pc\n");
+                pc_at = -1;
+            }
+        } else {
+            printf(" ");
+            this_row++;
+        }
+    }
+
+    if (i % 4 != 0)
+        printf("\n");
+}
+
 void run_machine(unsigned char *ops, unsigned int max_pc) {
-    printfv("starting emulation\n\n");
+    printfv("starting emulation\n");
+    printfv("executable code loaded at %p\n\n", ops);
+
+    cpu->max_pc = max_pc;
+    cpu->code = ops;
 
     if (enable_dbg)
         dbg_break();
