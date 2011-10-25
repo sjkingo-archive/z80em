@@ -50,6 +50,12 @@ static void wait_for_input(void) {
         if (!found)
             printf("dbg: unknown command %s\n", cmd);
 
+        i = 0;
+        while (args[i] != NULL) {
+            free(args[i]);
+            i++;
+        }
+        free(args);
         free(line);
     }
 }
