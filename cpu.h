@@ -1,6 +1,8 @@
 #ifndef CPU_H
 #define CPU_H
 
+#include <stdio.h>
+
 /* page 76 */
 struct z80_status_reg {
     unsigned char c; /* carry */
@@ -57,5 +59,8 @@ unsigned char get_reg_name(unsigned char reg);
 
 /* sets the program counter to the given value, and returns the old one */
 unsigned short set_pc(unsigned short new_pc);
+
+/* print the current CPU registers to the file stream out */
+void print_regs(FILE *out);
 
 #endif

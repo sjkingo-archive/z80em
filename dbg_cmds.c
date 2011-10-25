@@ -34,10 +34,7 @@ static void do_cmd_show(char *cmd, char **args, FILE *out) {
     }
 
     if (strcmp(args[0], "regs") == 0) {
-        fprintf(out, "pc=%04x\n", cpu->regs.pc);
-        fprintf(out, "A=%04x\tB=%04x\tC=%04x\tD=%04x\n", cpu->regs.a, cpu->regs.b, cpu->regs.c,
-                cpu->regs.d);
-        fprintf(out, "E=%04x\tH=%04x\tL=%04x\n", cpu->regs.e, cpu->regs.h, cpu->regs.l);
+        print_regs(out);
     } else if (strcmp(args[0], "objfile") == 0) {
         dump_objfile(out);
     }
@@ -62,11 +59,17 @@ static void cmd_less(char **args) {
         return;
     }
 
+    /* ignore broken pipes */
+    signal(SIGPIPE, SIG_IGN);
+
     int pid = fork();
     if (pid == 0) {
         /* redirect the pipe to stdin and exec less */
         close(pipefd[1]);
-        dup2(pipefd[0], STDIN_FILENO);
+        if (dup2(pipefd[0], STDIN_FILENO) < 0) {
+            perror("child dup2");
+            _exit(10);
+        }
         execlp(pager, pager, NULL);
         _exit(0);
     } else {
@@ -79,6 +82,7 @@ static void cmd_less(char **args) {
             return;
         }
         do_cmd_show("less", args, out);
+        fflush(out);
         fclose(out);
         close(pipefd[1]);
         wait(&status);

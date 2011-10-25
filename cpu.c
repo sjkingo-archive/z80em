@@ -96,3 +96,10 @@ unsigned char get_reg(unsigned char reg) {
     panic("unknown register %04x\n", reg);
     return 0;
 }
+
+void print_regs(FILE *out) {
+    fprintf(out, "pc=%04x\n", cpu->regs.pc);
+    fprintf(out, "A=%04x\tB=%04x\tC=%04x\tD=%04x\n", cpu->regs.a, cpu->regs.b, cpu->regs.c,
+            cpu->regs.d);
+    fprintf(out, "E=%04x\tH=%04x\tL=%04x\n", cpu->regs.e, cpu->regs.h, cpu->regs.l);
+}

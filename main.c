@@ -14,7 +14,6 @@
 #include "emulator.h"
 
 bool verbose = false;
-bool enable_dbg = false;
 
 static inline void print_usage_error(void) {
     fprintf(stderr, "Usage: z80em [options..] objfile\n");

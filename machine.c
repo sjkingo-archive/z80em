@@ -8,6 +8,18 @@
 #include "insts.h"
 #include "emulator.h"
 
+void halt(void) {
+    dbg_cont_possible = false;
+    fprintf(stderr, "Machine halted\n");
+    print_regs(stderr);
+    if (enable_dbg) {
+        dbg_cont_possible = false;
+        dbg_break();
+    } else {
+        exit(10);
+    }
+}
+
 #define _mark_pc() \
     if (pc_at != -1) { \
         for (unsigned short p = 0; p < pc_at; p++) \
@@ -60,14 +72,7 @@ void run_machine(unsigned char *ops, unsigned int max_pc) {
 
         struct z80_instruction *inst = find_opcode(opcode);
         if (inst == NULL) {
-            if (enable_dbg) {
-                printf("Error: unknown opcode %04x\n", opcode);
-                dbg_cont_possible = false;
-                dbg_break();
-                panic("dbg exited when emulation cannot continue\n");
-            } else {
-                panic("unknown opcode %04x\n", opcode);
-            }
+            panic("unknown opcode %04x\n", opcode);
         }
         printfv("  %s\n", inst->name);
 
@@ -146,12 +151,7 @@ void run_machine(unsigned char *ops, unsigned int max_pc) {
                 break;
 
             default:
-                if (enable_dbg) {
-                    printf("Error: unhandled opcode %04x (%s)\n", opcode, inst->name);
-                    dbg_break();
-                } else {
-                    panic("unhandled opcode %s (%04x)\n", inst->name, opcode);
-                }
+                panic("Error: unhandled opcode %04x (%s)\n", opcode, inst->name);
         }
 
         cpu->regs.pc += inst->cycles;

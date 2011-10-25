@@ -3,20 +3,18 @@
 
 #include <stdbool.h>
 #include <stdio.h>
-#include <stdlib.h>
 
-extern bool verbose, enable_dbg;
-
-static inline void halt(void) {
-    fprintf(stderr, "machine halted\n");
-    exit(10);
-}
+extern bool verbose;
 
 #define printfv(fmt, ...) \
     if (verbose) printf(fmt, ##__VA_ARGS__)
 
+/* abnormally halt the machine and drop to the debugger if enabled */
+void halt(void);
+
+/* write error message and halt the machine */
 #define panic(fmt, ...) ({ \
-    fprintf(stderr, "PANIC: %s(): " fmt, __func__, ##__VA_ARGS__); \
+    fprintf(stderr, "\nPANIC: %s(): " fmt, __func__, ##__VA_ARGS__); \
     halt(); \
 })
 

@@ -9,6 +9,7 @@
 #include "cpu.h"
 #include "emulator.h"
 
+bool enable_dbg = false;
 bool dbg_cont_possible = true;
 bool dbg_ss = false;
 
