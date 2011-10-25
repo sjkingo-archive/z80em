@@ -28,7 +28,7 @@ void dump_objfile(void) {
         if (i == cpu->regs.pc)
             pc_at = this_row - this_print;
 
-        if (i != 0 && i % DUMP_COLS == 0) {
+        if (i != 0 && (i+1) % DUMP_COLS == 0) {
             printf("\n");
             this_row = 0;
             mark_pc();
