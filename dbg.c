@@ -57,8 +57,8 @@ static void wait_for_input(void) {
 }
 
 void dbg_break(void) {
-    printf("\nBreaking to dbg\n");
-    printf("pc=%d\n", cpu->regs.pc);
+    static unsigned int break_n = 0;
+    printf("\n#%d pc=%d\n", break_n++, cpu->regs.pc);
     wait_for_input();
     enable_dbg = true;
 }
