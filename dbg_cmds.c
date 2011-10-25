@@ -7,7 +7,10 @@
 #include "emulator.h"
 
 static void cmd_cont(char **args __attribute__((unused))) {
-    enable_debugger = false;
+    if (debugger_cont_possible)
+        enable_debugger = false;
+    else
+        printf("dbg: cannot continue due to previous error\n");
 }
 
 static void cmd_show(char **args) {

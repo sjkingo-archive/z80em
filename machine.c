@@ -22,7 +22,9 @@ void run_machine(unsigned char *ops, unsigned int max_pc) {
         if (inst == NULL) {
             if (enable_debugger) {
                 printf("Error: unknown opcode 0x%x\n", opcode);
+                debugger_cont_possible = false;
                 debugger_break();
+                panic("debugger exited when emulation cannot continue\n");
             } else {
                 panic("unknown opcode 0x%x\n", opcode);
             }

@@ -7,6 +7,8 @@
 #include "cpu.h"
 #include "emulator.h"
 
+bool debugger_cont_possible = true;
+
 static void wait_for_input(void) {
     char buf[1024];
 
