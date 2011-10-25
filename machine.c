@@ -11,7 +11,8 @@
 void run_machine(unsigned char *ops, unsigned int max_pc) {
     printfv("starting emulation\n\n");
 
-    if (enable_debugger) debugger_break();
+    if (enable_debugger)
+        debugger_break();
 
     while (cpu->regs.pc < max_pc) {
         unsigned char opcode = ops[cpu->regs.pc];
@@ -19,7 +20,12 @@ void run_machine(unsigned char *ops, unsigned int max_pc) {
 
         struct z80_instruction *inst = find_opcode(opcode);
         if (inst == NULL) {
-            panic("invalid opcode 0x%x\n", opcode);
+            if (enable_debugger) {
+                printf("Error: unknown opcode 0x%x\n", opcode);
+                debugger_break();
+            } else {
+                panic("unknown opcode 0x%x\n", opcode);
+            }
         }
         printfv("  %s\n", inst->name);
 
@@ -69,7 +75,12 @@ void run_machine(unsigned char *ops, unsigned int max_pc) {
                 break;
 
             default:
-                panic("unhandled opcode %s (0x%x)\n", inst->name, opcode);
+                if (enable_debugger) {
+                    printf("Error: unhandled opcode 0x%x (%s)\n", opcode, inst->name);
+                    debugger_break();
+                } else {
+                    panic("unhandled opcode %s (0x%x)\n", inst->name, opcode);
+                }
         }
 
         cpu->regs.pc += inst->cycles;

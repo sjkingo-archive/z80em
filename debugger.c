@@ -10,7 +10,7 @@
 static void wait_for_input(void) {
     char buf[1024];
 
-    for (;;) {
+    while (enable_debugger) {
         char *b, *cmd, *arg;
         char **args;
         unsigned int nargs = 0;
@@ -54,9 +54,8 @@ static void wait_for_input(void) {
 }
 
 void debugger_break(void) {
-    printf("Breaking to debugger\n");
+    printf("\nBreaking to debugger\n");
     printf("pc=%d\n", cpu->regs.pc);
     wait_for_input();
-    enable_debugger = false;
-    printf("Exiting debugger\n\n");
+    enable_debugger = true;
 }
