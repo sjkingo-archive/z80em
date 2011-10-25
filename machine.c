@@ -8,6 +8,14 @@
 #include "insts.h"
 #include "emulator.h"
 
+#define mark_pc() \
+    if (pc_at != -1) { \
+        for (unsigned short p = 0; p < pc_at; p++) \
+            printf(" "); \
+        printf("^ pc\n"); \
+        pc_at = -1; \
+    }
+
 void dump_objfile(void) {
     unsigned short i;
     unsigned int this_row = 0;
@@ -23,21 +31,17 @@ void dump_objfile(void) {
         if (i != 0 && i % 4 == 0) {
             printf("\n");
             this_row = 0;
-
-            if (pc_at != -1) {
-                for (unsigned short p = 0; p < pc_at; p++)
-                    printf(" ");
-                printf("^ pc\n");
-                pc_at = -1;
-            }
+            mark_pc();
         } else {
             printf(" ");
             this_row++;
         }
     }
 
-    if (i % 4 != 0)
+    if (i % 4 != 0) {
         printf("\n");
+        mark_pc();
+    }
 }
 
 void run_machine(unsigned char *ops, unsigned int max_pc) {
