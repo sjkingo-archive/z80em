@@ -10,6 +10,7 @@
 #include <unistd.h>
 
 #include "cpu.h"
+#include "dbg.h"
 #include "emulator.h"
 
 bool verbose = false;
@@ -85,6 +86,8 @@ int main(int argc, char **argv) {
     printf("\n");
 
     init_cpu_state();
+    if (enable_dbg)
+        dbg_init(NULL);
     setup_and_run(objfile);
 
     return 0;

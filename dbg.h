@@ -15,4 +15,12 @@ extern bool dbg_ss;
 
 void dbg_break(void);
 
+/* write history to the given filename
+ * note the argument is a void * for on_exit()'s sake, simply cast to char *
+ */
+void dbg_write_history(int exit_status, void *history_filename);
+
+/* init the debugger and optionally load history if history_filename is not NULL */
+void dbg_init(char *history_filename);
+
 #endif
