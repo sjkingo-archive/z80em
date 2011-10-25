@@ -8,38 +8,40 @@
 #include "insts.h"
 #include "emulator.h"
 
+#define DUMP_COLS 5
+void dump_objfile(FILE *out) {
+
 #define mark_pc() \
     if (pc_at != -1) { \
         for (unsigned short p = 0; p < pc_at; p++) \
-            printf(" "); \
-        printf("^ pc\n"); \
+            fprintf(out, " "); \
+        fprintf(out, "^ pc\n"); \
         pc_at = -1; \
     }
-#define DUMP_COLS 5
-void dump_objfile(void) {
+
     unsigned short i;
     unsigned int this_row = 0;
     int pc_at = -1;
 
     for (i = 0; i <= cpu->max_pc; i++) {
-        unsigned int this_print = printf("%04x", cpu->code[i]);
+        unsigned int this_print = fprintf(out, "%04x", cpu->code[i]);
         this_row += this_print;
 
         if (i == cpu->regs.pc)
             pc_at = this_row - this_print;
 
         if (i != 0 && (i+1) % DUMP_COLS == 0) {
-            printf("\n");
+            fprintf(out, "\n");
             this_row = 0;
             mark_pc();
         } else {
-            printf(" ");
+            fprintf(out, " ");
             this_row++;
         }
     }
 
     if (i % DUMP_COLS != 0) {
-        printf("\n");
+        fprintf(out, "\n");
         mark_pc();
     }
 }

@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <sys/wait.h>
 
 #include "cpu.h"
 #include "dbg.h"
@@ -22,21 +24,64 @@ static void cmd_step(char **args __attribute__((unused))) {
     }
 }
 
-static void cmd_show(char **args) {
+static void do_cmd_show(char *cmd, char **args, FILE *out) {
     if (args[0] == NULL) {
-        printf("show [option]\n");
-        printf("     regs\tShow the status of the CPU registers\n");
-        printf("     objfile\thexdumps the object file from pc point on\n");
+        fprintf(out, "%s [option]\n", cmd);
+        fprintf(out, "     regs\tShow the status of the CPU registers\n");
+        fprintf(out, "     objfile\thexdumps the object file from pc point on\n");
+        fprintf(out, "see also less\n");
         return;
     }
 
     if (strcmp(args[0], "regs") == 0) {
-        printf("pc=%d\n", cpu->regs.pc);
-        printf("A=%x\tB=%x\tC=%x\tD=%x\n", cpu->regs.a, cpu->regs.b, cpu->regs.c,
+        fprintf(out, "pc=%d\n", cpu->regs.pc);
+        fprintf(out, "A=%x\tB=%x\tC=%x\tD=%x\n", cpu->regs.a, cpu->regs.b, cpu->regs.c,
                 cpu->regs.d);
-        printf("E=%x\tH=%x\tL=%x\n", cpu->regs.e, cpu->regs.h, cpu->regs.l);
+        fprintf(out, "E=%x\tH=%x\tL=%x\n", cpu->regs.e, cpu->regs.h, cpu->regs.l);
     } else if (strcmp(args[0], "objfile") == 0) {
-        dump_objfile();
+        dump_objfile(out);
+    }
+}
+
+static void cmd_show(char **args) {
+    /* wrapper due to file stream mangling */
+    do_cmd_show("show", args, stdout);
+}
+
+static void cmd_less(char **args) {
+    /* honour the user's pager setting */
+    char *pager = getenv("PAGER");
+    if (pager == NULL) {
+        printf("Cannot use this command as PAGER is not set in env\n");
+        return;
+    }
+
+    int pipefd[2];
+    if (pipe(pipefd) < 0) {
+        perror("pipe");
+        return;
+    }
+
+    int pid = fork();
+    if (pid == 0) {
+        /* redirect the pipe to stdin and exec less */
+        close(pipefd[1]);
+        dup2(pipefd[0], STDIN_FILENO);
+        execlp(pager, pager, NULL);
+        _exit(0);
+    } else {
+        /* send the output of do_cmd_show() down the pipe */
+        close(pipefd[0]);
+        int status;
+        FILE *out = fdopen(pipefd[1], "w");
+        if (out == NULL) {
+            perror("fdopen");
+            return;
+        }
+        do_cmd_show("less", args, out);
+        fclose(out);
+        close(pipefd[1]);
+        wait(&status);
     }
 }
 
@@ -84,6 +129,7 @@ struct dbg_cmd_entry dbg_cmds[] = {
     { "c", &cmd_cont, "Continue execution." },
     { "s", &cmd_step, "Single-step execution." },
     { "show", &cmd_show, "Show various information about the emulation." },
+    { "less", &cmd_less, "Show various information about the emulation, piped to less." },
     { "set", &cmd_set, "Set various registers." },
 
     { NULL, NULL, NULL }, /* sentinel entry; don't remove */

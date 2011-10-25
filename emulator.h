@@ -21,7 +21,7 @@ static inline void halt(void) {
 })
 
 /* hexdump the objfile with program counter marker */
-void dump_objfile(void);
+void dump_objfile(FILE *out);
 
 void run_machine(unsigned char *ops, unsigned int max_pc);
 
