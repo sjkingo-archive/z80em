@@ -91,7 +91,7 @@ static void cmd_set(char **args) {
         return;
     }
 
-    int n = atoi(args[1]);
+    long n = strtol(args[1], NULL, 0);
     
     if (strcmp(args[0], "pc") == 0) {
         set_pc(n);
