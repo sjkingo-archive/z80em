@@ -3,16 +3,16 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include "debugger.h"
+#include "dbg.h"
 #include "cpu.h"
 #include "emulator.h"
 
-bool debugger_cont_possible = true;
+bool dbg_cont_possible = true;
 
 static void wait_for_input(void) {
     char buf[1024];
 
-    while (enable_debugger) {
+    while (enable_dbg) {
         char *b, *cmd, *arg;
         char **args;
         unsigned int nargs = 0;
@@ -55,9 +55,9 @@ static void wait_for_input(void) {
     }
 }
 
-void debugger_break(void) {
-    printf("\nBreaking to debugger\n");
+void dbg_break(void) {
+    printf("\nBreaking to dbg\n");
     printf("pc=%d\n", cpu->regs.pc);
     wait_for_input();
-    enable_debugger = true;
+    enable_dbg = true;
 }

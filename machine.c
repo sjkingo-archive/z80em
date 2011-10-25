@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "debugger.h"
+#include "dbg.h"
 #include "cpu.h"
 #include "insts.h"
 #include "emulator.h"
@@ -11,8 +11,8 @@
 void run_machine(unsigned char *ops, unsigned int max_pc) {
     printfv("starting emulation\n\n");
 
-    if (enable_debugger)
-        debugger_break();
+    if (enable_dbg)
+        dbg_break();
 
     while (cpu->regs.pc < max_pc) {
         unsigned char opcode = ops[cpu->regs.pc];
@@ -20,11 +20,11 @@ void run_machine(unsigned char *ops, unsigned int max_pc) {
 
         struct z80_instruction *inst = find_opcode(opcode);
         if (inst == NULL) {
-            if (enable_debugger) {
+            if (enable_dbg) {
                 printf("Error: unknown opcode 0x%x\n", opcode);
-                debugger_cont_possible = false;
-                debugger_break();
-                panic("debugger exited when emulation cannot continue\n");
+                dbg_cont_possible = false;
+                dbg_break();
+                panic("dbg exited when emulation cannot continue\n");
             } else {
                 panic("unknown opcode 0x%x\n", opcode);
             }
@@ -77,9 +77,9 @@ void run_machine(unsigned char *ops, unsigned int max_pc) {
                 break;
 
             default:
-                if (enable_debugger) {
+                if (enable_dbg) {
                     printf("Error: unhandled opcode 0x%x (%s)\n", opcode, inst->name);
-                    debugger_break();
+                    dbg_break();
                 } else {
                     panic("unhandled opcode %s (0x%x)\n", inst->name, opcode);
                 }

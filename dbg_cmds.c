@@ -3,12 +3,12 @@
 #include <string.h>
 
 #include "cpu.h"
-#include "debugger.h"
+#include "dbg.h"
 #include "emulator.h"
 
 static void cmd_cont(char **args __attribute__((unused))) {
-    if (debugger_cont_possible)
-        enable_debugger = false;
+    if (dbg_cont_possible)
+        enable_dbg = false;
     else
         printf("dbg: cannot continue due to previous error\n");
 }
@@ -29,7 +29,7 @@ static void cmd_show(char **args) {
     }
 }
 
-struct debugger_command dbg_cmds[] = {
+struct dbg_cmd_entry dbg_cmds[] = {
     { "c", &cmd_cont, "Continue execution." },
     { "show", &cmd_show, "Show various information about the emulation." },
 

@@ -13,11 +13,11 @@
 #include "emulator.h"
 
 bool verbose = false;
-bool enable_debugger = false;
+bool enable_dbg = false;
 
 static inline void print_usage_error(void) {
     fprintf(stderr, "Usage: z80em [options..] objfile\n");
-    fprintf(stderr, "\t-d\tenter the debugger upon start\n");
+    fprintf(stderr, "\t-d\tenter the dbg upon start\n");
     fprintf(stderr, "\t-h\tprint this usage message and exit\n");
     fprintf(stderr, "\t-v\tenable verbose execution\n");
 }
@@ -28,7 +28,7 @@ static char *handle_args(int argc, char **argv) {
     while ((opt = getopt(argc, argv, "dhv")) != -1) {
         switch (opt) {
             case 'd':
-                enable_debugger = true;
+                enable_dbg = true;
                 break;
             case 'h':
                 print_usage_error();
