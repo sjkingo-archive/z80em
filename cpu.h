@@ -52,4 +52,7 @@ void set_reg(unsigned char reg, unsigned char n);
 /* get the single character name of the register given by reg */
 unsigned char get_reg_name(unsigned char reg);
 
+/* sets the program counter to the given value, and returns the old one */
+unsigned short set_pc(unsigned short new_pc);
+
 #endif

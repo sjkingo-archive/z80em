@@ -68,3 +68,10 @@ unsigned char get_reg_name(unsigned char reg) {
     }
     return '?';
 }
+
+unsigned short set_pc(unsigned short new_pc) {
+    unsigned short old_pc = cpu->regs.pc;
+    cpu->regs.pc = new_pc;
+    printfv("  pc <- %d\n", new_pc);
+    return old_pc;
+}

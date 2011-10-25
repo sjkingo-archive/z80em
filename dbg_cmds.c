@@ -29,9 +29,26 @@ static void cmd_show(char **args) {
     }
 }
 
+static void cmd_set(char **args) {
+    if (args[0] == NULL || args[1] == NULL) {
+        printf("set A|B|C|D|E|H|L|pc n\n");
+        return;
+    }
+
+    int n = atoi(args[1]);
+    
+    if (strcmp(args[0], "pc") == 0) {
+        set_pc(n);
+    } else {
+        char reg = args[1][0];
+        set_reg(reg, n);
+    }
+}
+
 struct dbg_cmd_entry dbg_cmds[] = {
     { "c", &cmd_cont, "Continue execution." },
     { "show", &cmd_show, "Show various information about the emulation." },
+    { "set", &cmd_set, "Set various registers." },
 
     { NULL, NULL, NULL }, /* sentinel entry; don't remove */
 };
