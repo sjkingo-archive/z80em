@@ -15,7 +15,7 @@
         printf("^ pc\n"); \
         pc_at = -1; \
     }
-
+#define DUMP_COLS 5
 void dump_objfile(void) {
     unsigned short i;
     unsigned int this_row = 0;
@@ -28,7 +28,7 @@ void dump_objfile(void) {
         if (i == cpu->regs.pc)
             pc_at = this_row - this_print;
 
-        if (i != 0 && i % 4 == 0) {
+        if (i != 0 && i % DUMP_COLS == 0) {
             printf("\n");
             this_row = 0;
             mark_pc();
@@ -38,7 +38,7 @@ void dump_objfile(void) {
         }
     }
 
-    if (i % 4 != 0) {
+    if (i % DUMP_COLS != 0) {
         printf("\n");
         mark_pc();
     }
