@@ -70,6 +70,9 @@ unsigned char get_reg_name(unsigned char reg) {
 }
 
 unsigned short set_pc(unsigned short new_pc) {
+    if (new_pc > cpu->max_pc)
+        panic("pc out of range\n");
+
     unsigned short old_pc = cpu->regs.pc;
     cpu->regs.pc = new_pc;
     printfv("  pc <- %d\n", new_pc);
