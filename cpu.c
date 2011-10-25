@@ -14,9 +14,7 @@ void init_cpu_state(void) {
 
     cpu = malloc(sizeof(*cpu));
     memset(cpu, 0, sizeof(*cpu));
-
     init_complete = true;
-    printfv("cpu state initialised\n");
 }
 
 void set_reg(unsigned char reg, unsigned char n) {
@@ -43,9 +41,9 @@ void set_reg(unsigned char reg, unsigned char n) {
             cpu->regs.l = n;
             break;
         default:
-            panic("unknown register 0x%x\n", reg);
+            panic("unknown register %04x\n", reg);
     }
-    printfv("  %c (0x%x) <- %x\n", get_reg_name(reg), reg, n);
+    printfv("  %c (%04x) <- %x\n", get_reg_name(reg), reg, n);
 }
 
 unsigned char get_reg_name(unsigned char reg) {
@@ -65,17 +63,16 @@ unsigned char get_reg_name(unsigned char reg) {
         case REG_L:
             return 'L';
     }
-    panic("unknown register 0x%x\n", reg);
+    panic("unknown register %04x\n", reg);
     return '?';
 }
 
 unsigned short set_pc(unsigned short new_pc) {
     if (new_pc > cpu->max_pc)
-        panic("pc out of range\n");
-
+        panic("pc out of range (%04x > %04x)\n", new_pc, cpu->max_pc);
     unsigned short old_pc = cpu->regs.pc;
     cpu->regs.pc = new_pc;
-    printfv("  pc <- %d\n", new_pc);
+    printfv("  pc <- %04x\n", new_pc);
     return old_pc;
 }
 
@@ -96,6 +93,6 @@ unsigned char get_reg(unsigned char reg) {
         case REG_L:
             return cpu->regs.l;
     }
-    panic("unknown register 0x%x\n", reg);
+    panic("unknown register %04x\n", reg);
     return 0;
 }

@@ -8,17 +8,15 @@
 #include "insts.h"
 #include "emulator.h"
 
-#define DUMP_COLS 5
-void dump_objfile(FILE *out) {
-
-#define mark_pc() \
+#define _mark_pc() \
     if (pc_at != -1) { \
         for (unsigned short p = 0; p < pc_at; p++) \
             fprintf(out, " "); \
         fprintf(out, "^ pc\n"); \
         pc_at = -1; \
     }
-
+#define DUMP_COLS 5
+void dump_objfile(FILE *out) {
     unsigned short i;
     unsigned int this_row = 0;
     int pc_at = -1;
@@ -33,7 +31,7 @@ void dump_objfile(FILE *out) {
         if (i != 0 && (i+1) % DUMP_COLS == 0) {
             fprintf(out, "\n");
             this_row = 0;
-            mark_pc();
+            _mark_pc();
         } else {
             fprintf(out, " ");
             this_row++;
@@ -42,13 +40,12 @@ void dump_objfile(FILE *out) {
 
     if (i % DUMP_COLS != 0) {
         fprintf(out, "\n");
-        mark_pc();
+        _mark_pc();
     }
 }
 
 void run_machine(unsigned char *ops, unsigned int max_pc) {
     printfv("starting emulation\n");
-    printfv("executable code loaded at %p\n\n", ops);
 
     cpu->max_pc = max_pc;
     cpu->code = ops;
@@ -59,17 +56,17 @@ void run_machine(unsigned char *ops, unsigned int max_pc) {
     printfv("entering main execution loop\n");
     while (cpu->regs.pc < max_pc) {
         unsigned char opcode = ops[cpu->regs.pc];
-        printfv("pc=%d, opcode=0x%x\n", cpu->regs.pc, opcode);
+        printfv("pc=%04x, opcode=%04x\n", cpu->regs.pc, opcode);
 
         struct z80_instruction *inst = find_opcode(opcode);
         if (inst == NULL) {
             if (enable_dbg) {
-                printf("Error: unknown opcode 0x%x\n", opcode);
+                printf("Error: unknown opcode %04x\n", opcode);
                 dbg_cont_possible = false;
                 dbg_break();
                 panic("dbg exited when emulation cannot continue\n");
             } else {
-                panic("unknown opcode 0x%x\n", opcode);
+                panic("unknown opcode %04x\n", opcode);
             }
         }
         printfv("  %s\n", inst->name);
@@ -150,10 +147,10 @@ void run_machine(unsigned char *ops, unsigned int max_pc) {
 
             default:
                 if (enable_dbg) {
-                    printf("Error: unhandled opcode 0x%x (%s)\n", opcode, inst->name);
+                    printf("Error: unhandled opcode %04x (%s)\n", opcode, inst->name);
                     dbg_break();
                 } else {
-                    panic("unhandled opcode %s (0x%x)\n", inst->name, opcode);
+                    panic("unhandled opcode %s (%04x)\n", inst->name, opcode);
                 }
         }
 

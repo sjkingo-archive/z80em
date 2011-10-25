@@ -34,10 +34,10 @@ static void do_cmd_show(char *cmd, char **args, FILE *out) {
     }
 
     if (strcmp(args[0], "regs") == 0) {
-        fprintf(out, "pc=%d\n", cpu->regs.pc);
-        fprintf(out, "A=%x\tB=%x\tC=%x\tD=%x\n", cpu->regs.a, cpu->regs.b, cpu->regs.c,
+        fprintf(out, "pc=%04x\n", cpu->regs.pc);
+        fprintf(out, "A=%04x\tB=%04x\tC=%04x\tD=%04x\n", cpu->regs.a, cpu->regs.b, cpu->regs.c,
                 cpu->regs.d);
-        fprintf(out, "E=%x\tH=%x\tL=%x\n", cpu->regs.e, cpu->regs.h, cpu->regs.l);
+        fprintf(out, "E=%04x\tH=%04x\tL=%04x\n", cpu->regs.e, cpu->regs.h, cpu->regs.l);
     } else if (strcmp(args[0], "objfile") == 0) {
         dump_objfile(out);
     }
