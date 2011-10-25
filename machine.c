@@ -71,6 +71,30 @@ void run_machine(unsigned char *ops, unsigned int max_pc) {
                 break;
             }
 
+            /* load r' into r */
+            case OP_LD_A_A:
+                /* nop */
+                printfv("what possible use is ld A,A ??\n");
+                break;
+            case OP_LD_A_B:
+                set_reg(REG_A, get_reg(REG_B));
+                break;
+            case OP_LD_A_C:
+                set_reg(REG_A, get_reg(REG_C));
+                break;
+            case OP_LD_A_D:
+                set_reg(REG_A, get_reg(REG_D));
+                break;
+            case OP_LD_A_E:
+                set_reg(REG_A, get_reg(REG_E));
+                break;
+            case OP_LD_A_H:
+                set_reg(REG_A, get_reg(REG_H));
+                break;
+            case OP_LD_A_L:
+                set_reg(REG_A, get_reg(REG_L));
+                break;
+
             case OP_HALT:
                 /* halt until interrupt */
                 for (;;); /* nop */

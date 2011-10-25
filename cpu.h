@@ -46,8 +46,9 @@ extern struct z80_cpu_state *cpu;
 /* initialise the cpu core - this should only be called once */
 void init_cpu_state(void);
 
-/* set the given register to n (immediate load) */
+/* sets or gets the given register to n/returns (immediate load) */
 void set_reg(unsigned char reg, unsigned char n);
+unsigned char get_reg(unsigned char reg);
 
 /* get the single character name of the register given by reg */
 unsigned char get_reg_name(unsigned char reg);

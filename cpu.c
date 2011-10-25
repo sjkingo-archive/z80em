@@ -64,9 +64,8 @@ unsigned char get_reg_name(unsigned char reg) {
             return 'H';
         case REG_L:
             return 'L';
-        default:
-            panic("unknown register 0x%x\n", reg);
     }
+    panic("unknown register 0x%x\n", reg);
     return '?';
 }
 
@@ -75,4 +74,25 @@ unsigned short set_pc(unsigned short new_pc) {
     cpu->regs.pc = new_pc;
     printfv("  pc <- %d\n", new_pc);
     return old_pc;
+}
+
+unsigned char get_reg(unsigned char reg) {
+    switch (reg) {
+        case REG_A:
+            return cpu->regs.a;
+        case REG_B:
+            return cpu->regs.b;
+        case REG_C:
+            return cpu->regs.c;
+        case REG_D:
+            return cpu->regs.d;
+        case REG_E:
+            return cpu->regs.e;
+        case REG_H:
+            return cpu->regs.h;
+        case REG_L:
+            return cpu->regs.l;
+    }
+    panic("unknown register 0x%x\n", reg);
+    return 0;
 }
