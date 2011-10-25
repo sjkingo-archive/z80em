@@ -54,6 +54,7 @@ void run_machine(unsigned char *ops, unsigned int max_pc) {
     if (enable_dbg)
         dbg_break();
 
+    printfv("entering main execution loop\n");
     while (cpu->regs.pc < max_pc) {
         unsigned char opcode = ops[cpu->regs.pc];
         printfv("pc=%d, opcode=0x%x\n", cpu->regs.pc, opcode);
@@ -70,6 +71,9 @@ void run_machine(unsigned char *ops, unsigned int max_pc) {
             }
         }
         printfv("  %s\n", inst->name);
+
+        if (dbg_ss)
+            dbg_break();
 
         /* the meat of the emulator - instruction emulation */
         switch (opcode) {

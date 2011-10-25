@@ -11,6 +11,7 @@ struct dbg_cmd_entry {
 extern struct dbg_cmd_entry dbg_cmds[];
 
 extern bool dbg_cont_possible;
+extern bool dbg_ss;
 
 void dbg_break(void);
 

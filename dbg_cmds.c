@@ -13,6 +13,15 @@ static void cmd_cont(char **args __attribute__((unused))) {
         printf("dbg: cannot continue due to previous error\n");
 }
 
+static void cmd_step(char **args __attribute__((unused))) {
+    if (dbg_cont_possible) {
+        enable_dbg = false;
+        dbg_ss = true;
+    } else {
+        printf("dbg: cannot step due to previous error\n");
+    }
+}
+
 static void cmd_show(char **args) {
     if (args[0] == NULL) {
         printf("show [option]\n");
@@ -73,6 +82,7 @@ static void cmd_set(char **args) {
 
 struct dbg_cmd_entry dbg_cmds[] = {
     { "c", &cmd_cont, "Continue execution." },
+    { "s", &cmd_step, "Single-step execution." },
     { "show", &cmd_show, "Show various information about the emulation." },
     { "set", &cmd_set, "Set various registers." },
 

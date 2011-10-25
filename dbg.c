@@ -8,6 +8,7 @@
 #include "emulator.h"
 
 bool dbg_cont_possible = true;
+bool dbg_ss = false;
 
 static void wait_for_input(void) {
     char buf[1024];
