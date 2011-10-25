@@ -72,8 +72,10 @@ void run_machine(unsigned char *ops, unsigned int max_pc) {
         }
         printfv("  %s\n", inst->name);
 
-        if (dbg_ss)
+        if (dbg_ss) {
+            dbg_ss = false;
             dbg_break();
+        }
 
         /* the meat of the emulator - instruction emulation */
         switch (opcode) {
