@@ -40,8 +40,32 @@ static void cmd_set(char **args) {
     if (strcmp(args[0], "pc") == 0) {
         set_pc(n);
     } else {
-        char reg = args[1][0];
-        set_reg(reg, n);
+        switch (args[0][0]) {
+            case 'A':
+                set_reg(REG_A, n);
+                break;
+            case 'B':
+                set_reg(REG_B, n);
+                break;
+            case 'C':
+                set_reg(REG_C, n);
+                break;
+            case 'D':
+                set_reg(REG_D, n);
+                break;
+            case 'E':
+                set_reg(REG_E, n);
+                break;
+            case 'H':
+                set_reg(REG_H, n);
+                break;
+            case 'L':
+                set_reg(REG_L, n);
+                break;
+            default:
+                printf("unknown register %c\n", args[0][0]);
+                return;
+        }
     }
 }
 
