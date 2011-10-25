@@ -43,7 +43,7 @@ void set_reg(unsigned char reg, unsigned char n) {
         default:
             panic("unknown register %04x\n", reg);
     }
-    printfv("  %c (%04x) <- %x\n", get_reg_name(reg), reg, n);
+    printfv("  %c (%04x) <- %04x\n", get_reg_name(reg), reg, n);
 }
 
 unsigned char get_reg_name(unsigned char reg) {
