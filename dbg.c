@@ -48,7 +48,7 @@ static void wait_for_input(void) {
         }
 
         if (!found)
-            printf("dbg: unknown command %s\n", cmd);
+            printf("dbg: unknown command %s; try help\n", cmd);
 
         i = 0;
         while (args[i] != NULL) {

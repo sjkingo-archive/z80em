@@ -125,6 +125,14 @@ static void cmd_set(char **args) {
     }
 }
 
+static void cmd_help(char **args __attribute__((unused))) {
+    unsigned int i = 0;
+    while (dbg_cmds[i].cmd != NULL) {
+        printf("%s\t\t%s\n", dbg_cmds[i].cmd, dbg_cmds[i].help);
+        i++;
+    }
+}
+
 struct dbg_cmd_entry dbg_cmds[] = {
     { "c", &cmd_cont, "Continue execution." },
     { "s", &cmd_step, "Single-step execution." },
@@ -132,6 +140,7 @@ struct dbg_cmd_entry dbg_cmds[] = {
     { "less", &cmd_less, "Show various information about the emulation, piped to less." },
     { "set", &cmd_set, "Set various registers." },
 
+    { "help", &cmd_help, "Show this help information." },
     { NULL, NULL, NULL }, /* sentinel entry; don't remove */
 };
 
