@@ -16,7 +16,7 @@ static inline void halt(void) {
     if (verbose) printf(fmt, ##__VA_ARGS__)
 
 #define panic(fmt, ...) ({ \
-    fprintf(stderr, "PANIC: " fmt, ##__VA_ARGS__); \
+    fprintf(stderr, "PANIC: %s(): " fmt, __func__, ##__VA_ARGS__); \
     halt(); \
 })
 

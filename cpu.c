@@ -9,13 +9,14 @@ struct z80_cpu_state *cpu;
 
 void init_cpu_state(void) {
     static bool init_complete = false;
-    if (init_complete) panic("init_cpu_state() already called");
+    if (init_complete)
+        panic("already called");
 
     cpu = malloc(sizeof(*cpu));
     memset(cpu, 0, sizeof(*cpu));
 
     init_complete = true;
-    printfv("cpu initialised\n");
+    printfv("cpu state initialised\n");
 }
 
 void set_reg(unsigned char reg, unsigned char n) {
