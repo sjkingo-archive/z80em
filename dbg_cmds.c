@@ -138,8 +138,13 @@ static void cmd_help(char **args __attribute__((unused))) {
     }
 }
 
-static void cmd_disass(char **args __attribute__((unused))) {
-    disassemble_objfile(0);
+static void cmd_disass(char **args) {
+    unsigned int limit;
+    if (args[0] == NULL)
+        limit = 0;
+    else
+        limit = strtol(args[0], NULL, 10);
+    disassemble_objfile(limit);
 }
 
 struct dbg_cmd_entry dbg_cmds[] = {
@@ -148,7 +153,7 @@ struct dbg_cmd_entry dbg_cmds[] = {
     { "show", &cmd_show, "Show various information about the emulation." },
     { "less", &cmd_less, "Show various information about the emulation, piped to less." },
     { "set", &cmd_set, "Set various registers." },
-    { "disass", &cmd_disass, "Disassemble the object file." },
+    { "disass", &cmd_disass, "[limit]\tDisassemble the object file up to limit (or 0 for all)." },
 
     { "help", &cmd_help, "Show this help information." },
     { NULL, NULL, NULL }, /* sentinel entry; don't remove */
