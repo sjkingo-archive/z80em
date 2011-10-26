@@ -68,13 +68,14 @@ void run_machine(unsigned char *ops, unsigned int max_pc) {
     printfv("entering main execution loop\n");
     while (cpu->regs.pc < max_pc) {
         unsigned char opcode = ops[cpu->regs.pc];
-        printfv("pc=%04x, opcode=%04x\n", cpu->regs.pc, opcode);
+        char *l = disass_opcode(cpu->regs.pc);
+        printfv("%s\n", l);
+        free(l);
 
         struct z80_instruction *inst = find_opcode(opcode);
         if (inst == NULL) {
             panic("unknown opcode %04x\n", opcode);
         }
-        printfv("  %s\n", inst->name);
 
         if (dbg_ss) {
             dbg_ss = false;
