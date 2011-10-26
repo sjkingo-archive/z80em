@@ -20,7 +20,7 @@ char *disass_opcode(unsigned short offset) {
     unsigned char opcode = cpu->code[offset];
     struct z80_instruction *inst = find_opcode(opcode);
     if (inst == NULL) {
-        sprintf(i, "%04x", opcode);
+        sprintf(i, "??\t\t%04x", opcode);
     } else {
         unsigned int x = 0;
         sprintf(i, "%s ", inst->name);
