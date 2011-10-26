@@ -62,6 +62,8 @@ static void wait_for_input(void) {
         unsigned int nargs = 0;
 
         line = readline("(dbg) ");
+        if (line == NULL)
+            exit(0);
         add_history(line);
         b = line;
 
