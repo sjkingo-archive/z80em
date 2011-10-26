@@ -31,7 +31,7 @@ enum z80_opcodes {
     OP_HALT=0x76,
 };
 
-struct z80_instruction insts[] = {
+static struct z80_instruction insts[] = {
     /* { opcode, "name", cycles }, */
     { OP_NOP, "nop", 1 },
 
