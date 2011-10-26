@@ -15,17 +15,29 @@ bool dbg_cont_possible = true;
 bool dbg_ss = false;
 
 char *disass_opcode(unsigned short offset) {
-    char *i = malloc(1024);;
+    char *i = malloc(1024);
     unsigned char opcode = cpu->code[offset];
     struct z80_instruction *inst = find_opcode(opcode);
     if (inst == NULL) {
         sprintf(i, "%04x", opcode);
     } else {
-        strcpy(i, inst->name);
+        sprintf(i, "%s ", inst->name);
+        if (inst->args != NULL)
+            strcat(i, inst->args);
     }
 
     char *r = malloc(1024);
     sprintf(r, "%04x\t\t%s", offset, i);
+    if (inst != NULL && inst->n_args != 0) {
+        strcat(r, "\t");
+        for (unsigned short x = 1; x <= inst->n_args; x++) {
+            char b[512];
+            sprintf(b, "%04x (%d)", cpu->code[offset+x], cpu->code[offset+x]);
+            strcat(r, b);
+            if (x+1 < inst->n_args)
+                strcat(r, ",");
+        }
+    }
     free(i);
     return r;
 }

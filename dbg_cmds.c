@@ -139,20 +139,23 @@ static void cmd_help(char **args __attribute__((unused))) {
 }
 
 static void cmd_disass(char **args __attribute__((unused))) {
-    unsigned short i = 0;
-    unsigned short offset = cpu->regs.pc;
-    while (i < 10 && offset < cpu->max_pc) {
-        if (i == 0)
+    unsigned short offset = 0;
+    printf("assembler dump from start of objfile:\n");
+
+    while (offset < cpu->max_pc) {
+        /* pc */
+        if (offset == cpu->regs.pc)
             printf("=> ");
         else
             printf("   ");
 
+        /* print the disassembled opcode */
         char *l = disass_opcode(offset);
         printf("%s\n", l);
         free(l);
 
-        i++;
-        struct z80_instruction *inst = find_opcode(offset);
+        /* work out how far to move ahead for the next instruction */
+        struct z80_instruction *inst = find_opcode(cpu->code[offset]);
         if (inst == NULL) {
             /* assume cycles = 1 */
             offset++;
@@ -160,9 +163,8 @@ static void cmd_disass(char **args __attribute__((unused))) {
             offset += inst->cycles;
         }
     }
-    
-    if (offset < cpu->max_pc)
-        printf("[truncated]\n");
+
+    printf("end of assembler dump\n");
 }
 
 struct dbg_cmd_entry dbg_cmds[] = {
