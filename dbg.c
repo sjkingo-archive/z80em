@@ -22,10 +22,10 @@ char *disass_opcode(unsigned short offset) {
     if (inst == NULL) {
         sprintf(i, "%04x", opcode);
     } else {
+        unsigned int x = 0;
         sprintf(i, "%s ", inst->name);
 
         /* append the static args */
-        unsigned int x = 0;
         while (inst->sargs[x] != NULL) {
             strcat(i, inst->sargs[x]);
             if (inst->sargs[x+1] == NULL) {
@@ -46,6 +46,16 @@ char *disass_opcode(unsigned short offset) {
                 if (x+1 < inst->n_vargs)
                     strcat(i, ",");
             }
+        }
+
+        /* append the hex dump of the instruction */
+        x = 0;
+        strcat(i, "\t\t");
+        while (x < inst->cycles) {
+            char b[20];
+            sprintf(b, "%04x ", cpu->code[offset+x]);
+            strcat(i, b);
+            x++;
         }
     }
 
