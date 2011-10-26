@@ -138,3 +138,40 @@ void dbg_init(char *history_filename) {
         on_exit(dbg_write_history, history_filename);
     }
 }
+
+void disassemble_objfile(unsigned int max_insts) {
+    unsigned short offset = 0;
+    unsigned int i = 0;
+    printf("assembler dump from start of objfile:\n");
+
+    while (offset < cpu->max_pc) {
+        /* pc */
+        if (offset == cpu->regs.pc)
+            printf("=> ");
+        else
+            printf("   ");
+
+        /* print the disassembled opcode */
+        char *l = disass_opcode(offset);
+        printf("%s\n", l);
+        free(l);
+
+        /* work out how far to move ahead for the next instruction */
+        struct z80_instruction *inst = find_opcode(cpu->code[offset]);
+        if (inst == NULL) {
+            /* assume cycles = 1 */
+            offset++;
+        } else {
+            offset += inst->cycles;
+        }
+
+        i++;
+        if (max_insts != 0 && i > max_insts) 
+            break;
+    }
+
+    if (max_insts != 0)
+        printf("truncated assembler dump to %d instructions\n", max_insts);
+    else
+        printf("end of assembler dump\n");
+}

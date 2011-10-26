@@ -30,4 +30,7 @@ void dbg_write_history(int exit_status, void *history_filename);
 /* init the debugger and optionally load history if history_filename is not NULL */
 void dbg_init(char *history_filename);
 
+/* print disassembly of objfile, up to max_insts or full output if 0 */
+void disassemble_objfile(unsigned int max_insts);
+
 #endif

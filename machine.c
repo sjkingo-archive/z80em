@@ -12,6 +12,7 @@ void halt(void) {
     dbg_cont_possible = false;
     fprintf(stderr, "Machine halted\n");
     print_regs(stderr);
+    disassemble_objfile(10);
     if (enable_dbg) {
         dbg_cont_possible = false;
         dbg_break();
