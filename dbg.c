@@ -16,28 +16,41 @@ bool dbg_ss = false;
 
 char *disass_opcode(unsigned short offset) {
     char *i = malloc(1024);
+
     unsigned char opcode = cpu->code[offset];
     struct z80_instruction *inst = find_opcode(opcode);
     if (inst == NULL) {
         sprintf(i, "%04x", opcode);
     } else {
         sprintf(i, "%s ", inst->name);
-        if (inst->args != NULL)
-            strcat(i, inst->args);
+
+        /* append the static args */
+        unsigned int x = 0;
+        while (inst->sargs[x] != NULL) {
+            strcat(i, inst->sargs[x]);
+            if (inst->sargs[x+1] == NULL) {
+                if (inst->n_vargs != 0)
+                    strcat(i, ",");
+            } else {
+                strcat(i, ",");
+            }
+            x++;
+        }
+
+        /* append the variable args */
+        if (inst->n_vargs != 0) {
+            for (x = 1; x <= inst->n_vargs; x++) {
+                char b[512];
+                sprintf(b, "%d", cpu->code[offset+x]);
+                strcat(i, b);
+                if (x+1 < inst->n_vargs)
+                    strcat(i, ",");
+            }
+        }
     }
 
     char *r = malloc(1024);
     sprintf(r, "%04x\t\t%s", offset, i);
-    if (inst != NULL && inst->n_args != 0) {
-        strcat(r, "\t");
-        for (unsigned short x = 1; x <= inst->n_args; x++) {
-            char b[512];
-            sprintf(b, "%04x (%d)", cpu->code[offset+x], cpu->code[offset+x]);
-            strcat(r, b);
-            if (x+1 < inst->n_args)
-                strcat(r, ",");
-        }
-    }
     free(i);
     return r;
 }
