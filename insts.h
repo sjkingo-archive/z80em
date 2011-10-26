@@ -4,6 +4,8 @@
 struct z80_instruction {
     unsigned short opcode;
     char *name;
+    char *args;
+    unsigned short n_args;
     unsigned char cycles;
 };
 
@@ -32,31 +34,31 @@ enum z80_opcodes {
 };
 
 static struct z80_instruction insts[] = {
-    /* { opcode, "name", cycles }, */
-    { OP_NOP, "nop", 1 },
+    /* { opcode, "name", "args", n_args, cycles }, */
+    { OP_NOP, "nop", NULL, 0, 1 },
 
     /* load immediates */
-    { OP_LD_A_N, "ld A,n", 2 },
-    { OP_LD_B_N, "ld B,n", 2 },
-    { OP_LD_C_N, "ld C,n", 2 },
-    { OP_LD_D_N, "ld D,n", 2 },
-    { OP_LD_E_N, "ld E,n", 2 },
-    { OP_LD_H_N, "ld H,n", 2 },
-    { OP_LD_L_N, "ld L,n", 2 },
+    { OP_LD_A_N, "ld", "A,n", 1, 2 },
+    { OP_LD_B_N, "ld", "B,n", 1, 2 },
+    { OP_LD_C_N, "ld", "C,n", 1, 2 },
+    { OP_LD_D_N, "ld", "D,n", 1, 2 },
+    { OP_LD_E_N, "ld", "E,n", 1, 2 },
+    { OP_LD_H_N, "ld", "H,n", 1, 2 },
+    { OP_LD_L_N, "ld", "L,n", 1, 2 },
 
     /* load register r' into r */
-    { OP_LD_A_B, "ld A,B", 1 },
-    { OP_LD_A_C, "ld A,C", 1 },
-    { OP_LD_A_D, "ld A,D", 1 },
-    { OP_LD_A_E, "ld A,E", 1 },
-    { OP_LD_A_H, "ld A,H", 1 },
-    { OP_LD_A_L, "ld A,L", 1 },
-    { OP_LD_A_A, "ld A,A", 1 },
+    { OP_LD_A_B, "ld", "A,B", 0, 1 },
+    { OP_LD_A_C, "ld", "A,C", 0, 1 },
+    { OP_LD_A_D, "ld", "A,D", 0, 1 },
+    { OP_LD_A_E, "ld", "A,E", 0, 1 },
+    { OP_LD_A_H, "ld", "A,H", 0, 1 },
+    { OP_LD_A_L, "ld", "A,L", 0, 1 },
+    { OP_LD_A_A, "ld", "A,A", 0, 1 },
 
-    { OP_HALT, "halt", 1 },
+    { OP_HALT, "halt", NULL, 0, 1 },
 
     /* always leave this last */
-    { 0x0, NULL, 0 },
+    { 0x0, NULL, NULL, 0, 0 },
 };
 
 static inline struct z80_instruction *find_opcode(unsigned char opcode) {
