@@ -8,10 +8,27 @@
 #include "dbg.h"
 #include "cpu.h"
 #include "emulator.h"
+#include "insts.h"
 
 bool enable_dbg = false;
 bool dbg_cont_possible = true;
 bool dbg_ss = false;
+
+char *disass_opcode(unsigned short offset) {
+    char *i = malloc(1024);;
+    unsigned char opcode = cpu->code[offset];
+    struct z80_instruction *inst = find_opcode(opcode);
+    if (inst == NULL) {
+        sprintf(i, "%04x", opcode);
+    } else {
+        strcpy(i, inst->name);
+    }
+
+    char *r = malloc(1024);
+    sprintf(r, "%04x\t\t%s", offset, i);
+    free(i);
+    return r;
+}
 
 static void wait_for_input(void) {
     while (enable_dbg) {

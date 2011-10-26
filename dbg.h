@@ -14,6 +14,12 @@ extern bool enable_dbg;
 extern bool dbg_cont_possible;
 extern bool dbg_ss;
 
+/* given an offset into the executable code, attempt to disassemble it
+ * and return a string ready for printing (no newline). note the caller
+ * must free this string.
+ */
+char *disass_opcode(unsigned short offset);
+
 void dbg_break(void);
 
 /* write history to the given filename

@@ -7,6 +7,7 @@
 #include "cpu.h"
 #include "dbg.h"
 #include "emulator.h"
+#include "insts.h"
 
 static void cmd_cont(char **args __attribute__((unused))) {
     if (dbg_cont_possible)
@@ -137,12 +138,40 @@ static void cmd_help(char **args __attribute__((unused))) {
     }
 }
 
+static void cmd_disass(char **args __attribute__((unused))) {
+    unsigned short i = 0;
+    unsigned short offset = cpu->regs.pc;
+    while (i < 10 && offset < cpu->max_pc) {
+        if (i == 0)
+            printf("=> ");
+        else
+            printf("   ");
+
+        char *l = disass_opcode(offset);
+        printf("%s\n", l);
+        free(l);
+
+        i++;
+        struct z80_instruction *inst = find_opcode(offset);
+        if (inst == NULL) {
+            /* assume cycles = 1 */
+            offset++;
+        } else {
+            offset += inst->cycles;
+        }
+    }
+    
+    if (offset < cpu->max_pc)
+        printf("[truncated]\n");
+}
+
 struct dbg_cmd_entry dbg_cmds[] = {
     { "c", &cmd_cont, "Continue execution." },
     { "s", &cmd_step, "Single-step execution." },
     { "show", &cmd_show, "Show various information about the emulation." },
     { "less", &cmd_less, "Show various information about the emulation, piped to less." },
     { "set", &cmd_set, "Set various registers." },
+    { "disass", &cmd_disass, "Disassemble the object file." },
 
     { "help", &cmd_help, "Show this help information." },
     { NULL, NULL, NULL }, /* sentinel entry; don't remove */
