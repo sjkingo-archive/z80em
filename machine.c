@@ -56,16 +56,16 @@ void dump_objfile(FILE *out) {
     }
 }
 
-void run_machine(char *ops, unsigned int max_pc) {
-    cpu->max_pc = max_pc;
-    cpu->code = ops;
+void run_machine(struct emulator_state *state) {
+    cpu->max_pc = state->size;
+    cpu->code = state->ops;
 
     if (dbg_enabled())
         dbg_break();
 
     printfv("entering main execution loop\n");
-    while (cpu->regs.pc < max_pc) {
-        unsigned char opcode = ops[cpu->regs.pc];
+    while (cpu->regs.pc < cpu->max_pc) {
+        unsigned char opcode = cpu->code[cpu->regs.pc];
         char *l = disass_opcode(cpu->regs.pc);
         printfv("%s\n", l);
         free(l);
@@ -93,7 +93,7 @@ void run_machine(char *ops, unsigned int max_pc) {
             case OP_LD_E_N:
             case OP_LD_H_N:
             case OP_LD_L_N: {
-                unsigned char n = ops[cpu->regs.pc+1];
+                unsigned char n = cpu->code[cpu->regs.pc+1];
                 switch (opcode) {
                     case OP_LD_A_N:
                         set_reg(REG_A, n);
@@ -162,7 +162,7 @@ void run_machine(char *ops, unsigned int max_pc) {
 
             /* jump group */
             case OP_JR_E: { /* page 241 */
-                char offset = ops[cpu->regs.pc+1]; /* may be -ve */
+                char offset = cpu->code[cpu->regs.pc+1]; /* may be -ve */
                 set_pc(cpu->regs.pc+2); /* increment for *this* instruction */
                 set_pc(cpu->regs.pc+offset);
                 continue; /* we've manually updated pc */

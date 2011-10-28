@@ -2,18 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/mman.h>
-#include <fcntl.h>
-#include <unistd.h>
 
-#include "cpu.h"
 #include "dbg.h"
 #include "emulator.h"
-
-bool verbose = false;
 
 static bool enable_dbg = false;
 
@@ -53,31 +44,6 @@ static char *handle_args(int argc, char **argv) {
     return argv[optind];
 }
 
-static void setup_and_run(char *filename) {
-    int fd = open(filename, O_RDONLY);
-    if (fd < 0) {
-        perror("Unable to open object file");
-        exit(3);
-    }
-
-    struct stat s;
-    if (fstat(fd, &s) < 0) {
-        perror("Unable to stat object file");
-        exit(3);
-    }
-
-    void *ops = mmap(NULL, s.st_size, PROT_READ, MAP_SHARED, fd, 0);
-    if (ops == NULL) {
-        perror("Unable to map object file into memory");
-        exit(3);
-    }
-
-    run_machine((char *)ops, s.st_size);
-
-    munmap(ops, s.st_size);
-    close(fd);
-}
-
 int main(int argc, char **argv) {
     char *objfile = handle_args(argc, argv);
     void (*debugger_callback)(void) = dbg_break;
@@ -87,10 +53,13 @@ int main(int argc, char **argv) {
     if (verbose) printf("-v has enabled verbose execution\n");
     printf("\n");
 
-    init_cpu_state();
-    dbg_init(enable_dbg, NULL, debugger_callback);
-    setup_and_run(objfile);
+    /* set up and run the emulation */
+    struct emulator_state *s = init_emulator(objfile, enable_dbg,
+            NULL, debugger_callback);
+    run_machine(s);
 
     printf("end of emulation\n");
+    deinit_emulator(s);
+
     return 0;
 }
