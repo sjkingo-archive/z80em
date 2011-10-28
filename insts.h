@@ -28,7 +28,18 @@ enum z80_opcodes {
     OP_LD_A_E=0x7B,
     OP_LD_A_H=0x7C,
     OP_LD_A_L=0x7D,
+    OP_LD_A_HL=0x7E,
     OP_LD_A_A=0x7F,
+
+    /* arithmetic group */
+    OP_OR_A=0xB7,
+    OP_INC_B=0x04,
+    OP_INC_HL=0x23,
+
+    /* jump group */
+    OP_JR_E=0x18,
+
+    OP_RET_Z=0xC8,
 
     OP_HALT=0x76,
 };
@@ -53,7 +64,18 @@ static struct z80_instruction insts[] = {
     { OP_LD_A_E, "ld", 1, 0, {"A", "E", NULL} },
     { OP_LD_A_H, "ld", 1, 0, {"A", "H", NULL} },
     { OP_LD_A_L, "ld", 1, 0, {"A", "L", NULL} },
+    { OP_LD_A_HL, "ld", 1, 0, {"A", "[HL]", NULL} },
     { OP_LD_A_A, "ld", 1, 0, {"A", "A", NULL} },
+
+    /* arithmetic group */
+    { OP_OR_A, "or", 1, 0, {"A", NULL} },
+    { OP_INC_B, "inc", 1, 0, {"B", NULL} },
+    { OP_INC_HL, "inc", 1, 0, {"(HL)", NULL} },
+
+    /* jump group */
+    { OP_JR_E, "jr", 1, 1, {"e", NULL} },
+
+    { OP_RET_Z, "ret", 1, 0, {"Z", NULL} },
 
     { OP_HALT, "halt", 1, 0, {NULL} },
 

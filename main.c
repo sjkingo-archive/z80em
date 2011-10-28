@@ -70,7 +70,7 @@ static void setup_and_run(char *filename) {
         exit(3);
     }
 
-    run_machine((unsigned char *)ops, s.st_size);
+    run_machine((char *)ops, s.st_size);
 
     munmap(ops, s.st_size);
     close(fd);

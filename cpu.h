@@ -3,6 +3,9 @@
 
 #include <stdio.h>
 
+#define STACK_SIZE 256
+#define RAM_SIZE 1024
+
 /* page 76 */
 struct z80_status_reg {
     unsigned char c; /* carry */
@@ -22,27 +25,33 @@ enum z80_registers {
     REG_D=0x2,
     REG_E=0x3,
     REG_H=0x4,
-    REG_L=0x5
+    REG_L=0x5,
+    REG_HL
 };
 
 struct z80_register_state {
     unsigned short pc; /* program counter */
+    unsigned short sp; /* stack pointer, max = &stack+STACK_SIZE */
 
     /* general purpose registers */
-    unsigned char a;
-    unsigned char b;
-    unsigned char c;
-    unsigned char d;
-    unsigned char e;
-    unsigned char h;
-    unsigned char l;
+    char a;
+    char b;
+    char c;
+    char d;
+    char e;
+    char h;
+    char l;
 };
 
 struct z80_cpu_state {
     struct z80_status_reg status;
     struct z80_register_state regs;
+
     unsigned short max_pc; /* max program counter value */
-    unsigned char *code; /* executable code */
+    char *code; /* executable code */
+
+    char mem[RAM_SIZE]; /* writeable memory */
+    char stack[STACK_SIZE]; /* the stack, grows downwards into mem */
 };
 
 extern struct z80_cpu_state *cpu;
@@ -51,14 +60,17 @@ extern struct z80_cpu_state *cpu;
 void init_cpu_state(void);
 
 /* sets or gets the given register to n/returns (immediate load) */
-void set_reg(unsigned char reg, unsigned char n);
-unsigned char get_reg(unsigned char reg);
+void set_reg(unsigned char reg, char n);
+char get_reg(unsigned char reg);
 
 /* get the single character name of the register given by reg */
 unsigned char get_reg_name(unsigned char reg);
 
 /* sets the program counter to the given value, and returns the old one */
 unsigned short set_pc(unsigned short new_pc);
+
+/* computes the offset and sets the stack pointer to the given value, and returns the old one */
+unsigned short set_sp(unsigned short new_sp);
 
 /* print the current CPU registers to the file stream out */
 void print_regs(FILE *out);

@@ -57,7 +57,7 @@ void dump_objfile(FILE *out) {
     }
 }
 
-void run_machine(unsigned char *ops, unsigned int max_pc) {
+void run_machine(char *ops, unsigned int max_pc) {
     cpu->max_pc = max_pc;
     cpu->code = ops;
 
@@ -144,6 +144,52 @@ void run_machine(unsigned char *ops, unsigned int max_pc) {
             case OP_LD_A_L:
                 set_reg(REG_A, get_reg(REG_L));
                 break;
+            case OP_LD_A_HL:
+                set_reg(REG_A, get_reg(REG_HL));
+                break;
+
+            /* arithmetic group */
+            case OP_OR_A:
+                set_reg(REG_A, get_reg(REG_A) | (opcode & 0x7) << 5);
+                break;
+            case OP_INC_B /* page 160 */ :
+                set_reg(REG_B, get_reg(REG_B) + 1);
+                /* XXX set condition bits */
+                break;
+            case OP_INC_HL: /* page 161 */
+                cpu->mem[(short)get_reg(REG_HL)]++;
+                /* XXX set condition bits */
+                break;
+
+            /* jump group */
+            case OP_JR_E: { /* page 241 */
+                char offset = ops[cpu->regs.pc+1]; /* may be -ve */
+                set_pc(cpu->regs.pc+2); /* increment for *this* instruction */
+                set_pc(cpu->regs.pc+offset);
+                continue; /* we've manually updated pc */
+            }
+
+#if 0
+            case OP_RET_Z: /* pp 261-2 */ {
+                unsigned char cc = (opcode >> 3) & 0x7;
+                unsigned char r = 0;
+                switch (cc) {
+                    case 0x1:
+                        r = (cpu->status.z == 0);
+                        break;
+                    default:
+                        panic("unhandled cc %04x (see page 262)", cc);
+                }
+                if (r) {
+                    unsigned short p = cpu->regs.pc | (cpu->mem[cpu->regs.sp] << 8);
+                    printf("p = %d %04x\n", p, p);
+                    set_pc(p);
+                } else {
+                    /* nop */
+                }
+                break;
+            }
+#endif
 
             case OP_HALT:
                 /* halt until interrupt */
