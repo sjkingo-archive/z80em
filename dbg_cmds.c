@@ -147,6 +147,10 @@ static void cmd_disass(char **args) {
     disassemble_objfile(limit);
 }
 
+static void cmd_quit(char **args __attribute__((unused))) {
+    exit(0);
+}
+
 struct dbg_cmd_entry dbg_cmds[] = {
     { "c", &cmd_cont, "Continue execution." },
     { "s", &cmd_step, "Single-step execution." },
@@ -154,6 +158,7 @@ struct dbg_cmd_entry dbg_cmds[] = {
     { "less", &cmd_less, "Show various information about the emulation, piped to less." },
     { "set", &cmd_set, "Set various registers." },
     { "disass", &cmd_disass, "[limit]\tDisassemble the object file up to limit (or 0 for all)." },
+    { "quit", &cmd_quit, "Quits the emulation." },
 
     { "help", &cmd_help, "Show this help information." },
     { NULL, NULL, NULL }, /* sentinel entry; don't remove */

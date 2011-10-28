@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <signal.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 
@@ -13,6 +14,24 @@
 bool enable_dbg = false;
 bool dbg_cont_possible = true;
 bool dbg_ss = false;
+
+/* prototype due to static ordering */
+static void dbg_sigint(int);
+
+static void setup_sigint(void) {
+    struct sigaction sa;
+    sa.sa_handler = dbg_sigint;
+    sa.sa_flags = SA_RESETHAND;
+    if (sigaction(SIGINT, &sa, NULL) < 0) {
+        perror("sigaction (setup)");
+    }
+}
+
+static void dbg_sigint(int signum __attribute__((unused))) {
+    printf("\nCaught interrupt, breaking\n");
+    dbg_break();
+    setup_sigint();
+}
 
 char *disass_opcode(unsigned short offset) {
     char *i = malloc(1024);
@@ -130,6 +149,7 @@ void dbg_write_history(int exit_status __attribute__((unused)),
 }
 
 void dbg_init(char *history_filename) {
+    setup_sigint();
     using_history();
     if (history_filename != NULL) {
         if (read_history(history_filename) < 0) {
