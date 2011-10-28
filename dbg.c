@@ -11,9 +11,8 @@
 #include "emulator.h"
 #include "insts.h"
 
-bool enable_dbg = false;
-bool dbg_cont_possible = true;
-bool dbg_ss = false;
+/* state of the debugger */
+struct dbg_info *dbg_state = NULL;
 
 /* prototype due to static ordering */
 static void dbg_sigint(int);
@@ -85,7 +84,7 @@ char *disass_opcode(unsigned short offset) {
 }
 
 static void wait_for_input(void) {
-    while (enable_dbg) {
+    while (dbg_enabled()) {
         char *line, *b, *cmd, *arg;
         char **args;
         unsigned int nargs = 0;
@@ -138,7 +137,7 @@ void dbg_break(void) {
     static unsigned int break_n = 1;
     printf("\n#%03d\tpc=%04x\t(not yet executed)\n", break_n++, cpu->regs.pc);
     wait_for_input();
-    enable_dbg = true;
+    dbg_enable();
 }
 
 void dbg_write_history(int exit_status __attribute__((unused)), 
@@ -148,14 +147,23 @@ void dbg_write_history(int exit_status __attribute__((unused)),
     }
 }
 
-void dbg_init(char *history_filename) {
-    setup_sigint();
-    using_history();
-    if (history_filename != NULL) {
-        if (read_history(history_filename) < 0) {
-            perror("could not load history file");
+void dbg_init(bool enabled, char *history_filename, void (*callback)(void)) {
+    dbg_state = malloc(sizeof(*dbg_state));
+    dbg_state->enabled = enabled;
+    dbg_state->cont_possible = true;
+
+    if (enabled) {
+        dbg_state->break_func = callback;
+
+        setup_sigint();
+
+        using_history();
+        if (history_filename != NULL) {
+            if (read_history(history_filename) < 0) {
+                perror("could not load history file");
+            }
+            on_exit(dbg_write_history, history_filename);
         }
-        on_exit(dbg_write_history, history_filename);
     }
 }
 

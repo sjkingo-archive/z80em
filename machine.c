@@ -9,12 +9,11 @@
 #include "emulator.h"
 
 void halt(void) {
-    dbg_cont_possible = false;
+    dbg_disable_cont();
     fprintf(stderr, "Machine halted\n");
     print_regs(stderr);
     disassemble_objfile(10);
-    if (enable_dbg) {
-        dbg_cont_possible = false;
+    if (dbg_enabled()) {
         dbg_break();
     } else {
         exit(10);
@@ -61,7 +60,7 @@ void run_machine(char *ops, unsigned int max_pc) {
     cpu->max_pc = max_pc;
     cpu->code = ops;
 
-    if (enable_dbg)
+    if (dbg_enabled())
         dbg_break();
 
     printfv("entering main execution loop\n");
@@ -76,8 +75,8 @@ void run_machine(char *ops, unsigned int max_pc) {
             panic("unknown opcode %04x\n", opcode);
         }
 
-        if (dbg_ss) {
-            dbg_ss = false;
+        if (dbg_should_ss()) {
+            dbg_disable_ss();
             dbg_break();
         }
 

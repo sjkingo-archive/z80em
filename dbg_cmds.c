@@ -10,16 +10,16 @@
 #include "insts.h"
 
 static void cmd_cont(char **args __attribute__((unused))) {
-    if (dbg_cont_possible)
-        enable_dbg = false;
+    if (dbg_cont_possible())
+        dbg_disable();
     else
         printf("dbg: cannot continue due to previous error\n");
 }
 
 static void cmd_step(char **args __attribute__((unused))) {
-    if (dbg_cont_possible) {
-        enable_dbg = false;
-        dbg_ss = true;
+    if (dbg_cont_possible()) {
+        dbg_disable();
+        dbg_enable_ss();
     } else {
         printf("dbg: cannot step due to previous error\n");
     }

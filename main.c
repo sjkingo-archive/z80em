@@ -15,6 +15,8 @@
 
 bool verbose = false;
 
+static bool enable_dbg = false;
+
 static inline void print_usage_error(void) {
     fprintf(stderr, "Usage: z80em [options..] objfile\n");
     fprintf(stderr, "\t-d\tenter the dbg upon start\n");
@@ -78,6 +80,7 @@ static void setup_and_run(char *filename) {
 
 int main(int argc, char **argv) {
     char *objfile = handle_args(argc, argv);
+    void (*debugger_callback)(void) = dbg_break;
 
     printf("z80em - a z80 emulator and debugger\n");
     printf("Written by Sam Kingston <sam@sjkwi.com.au>\n");
@@ -85,8 +88,7 @@ int main(int argc, char **argv) {
     printf("\n");
 
     init_cpu_state();
-    if (enable_dbg)
-        dbg_init(NULL);
+    dbg_init(enable_dbg, NULL, debugger_callback);
     setup_and_run(objfile);
 
     printf("end of emulation\n");
