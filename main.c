@@ -89,5 +89,6 @@ int main(int argc, char **argv) {
         dbg_init(NULL);
     setup_and_run(objfile);
 
+    printf("end of emulation\n");
     return 0;
 }

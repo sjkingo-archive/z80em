@@ -58,8 +58,6 @@ void dump_objfile(FILE *out) {
 }
 
 void run_machine(unsigned char *ops, unsigned int max_pc) {
-    printfv("starting emulation\n");
-
     cpu->max_pc = max_pc;
     cpu->code = ops;
 
@@ -158,6 +156,4 @@ void run_machine(unsigned char *ops, unsigned int max_pc) {
 
         cpu->regs.pc += inst->cycles;
     }
-
-    printfv("\nfinished emulation\n");
 }
