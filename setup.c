@@ -28,7 +28,7 @@ struct emulator_state *init_emulator(char *filename, bool enable_dbg,
     }
 
     void *ops = mmap(NULL, s.st_size, PROT_READ, MAP_SHARED, fd, 0);
-    if (ops == NULL) {
+    if (ops == (void *)-1) {
         perror("Unable to map object file into memory");
         exit(3);
     }
