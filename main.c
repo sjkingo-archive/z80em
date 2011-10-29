@@ -46,7 +46,6 @@ static char *handle_args(int argc, char **argv) {
 
 int main(int argc, char **argv) {
     char *objfile = handle_args(argc, argv);
-    void (*debugger_callback)(void) = dbg_break;
 
     printf("z80em - a z80 emulator and debugger\n");
     printf("Written by Sam Kingston <sam@sjkwi.com.au>\n");
@@ -55,7 +54,7 @@ int main(int argc, char **argv) {
 
     /* set up and run the emulation */
     struct emulator_state *s = init_emulator(objfile, enable_dbg,
-            NULL, debugger_callback);
+            NULL, NULL);
     run_machine(s);
 
     printf("end of emulation\n");

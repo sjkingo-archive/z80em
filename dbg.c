@@ -133,11 +133,18 @@ static void wait_for_input(void) {
     }
 }
 
-void dbg_break(void) {
+static void internal_break(void) {
     static unsigned int break_n = 1;
     printf("\n#%03d\tpc=%04x\t(not yet executed)\n", break_n++, cpu->regs.pc);
     wait_for_input();
     dbg_enable();
+}
+
+void dbg_break(void) {
+    if (dbg_state->break_func == NULL)
+        internal_break();
+    else
+        dbg_state->break_func();
 }
 
 void dbg_write_history(int exit_status __attribute__((unused)), 
@@ -149,8 +156,10 @@ void dbg_write_history(int exit_status __attribute__((unused)),
 
 void dbg_init(bool enabled, char *history_filename, void (*callback)(void)) {
     dbg_state = malloc(sizeof(*dbg_state));
+    memset(dbg_state, 0, sizeof(*dbg_state));
     dbg_state->enabled = enabled;
     dbg_state->cont_possible = true;
+    dbg_state->break_func = callback;
 
     if (enabled) {
         dbg_state->break_func = callback;
