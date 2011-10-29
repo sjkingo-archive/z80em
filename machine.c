@@ -201,4 +201,6 @@ void run_machine(struct emulator_state *state) {
 
         cpu->regs.pc += inst->cycles;
     }
+
+    printfv("exited main execution loop\n");
 }
